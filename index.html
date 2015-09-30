@@ -1,0 +1,140 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="polymer-ext.html">
+
+  <script type="text/javascript">
+    Polymer.registrationsMap = {};
+
+    Polymer.registered = function(proto) {
+      var ignoreMethods = [
+        'constructor',
+        '_notifyChange',
+        '_propertySetter',
+        '__setProperty',
+        '_effectEffects',
+        '_clearPath'
+      ]
+
+      var methods = Object.getOwnPropertyNames(proto).filter(function(name) {
+        return (typeof proto[name] === 'function' && ignoreMethods.indexOf(name) == -1);
+      });
+
+      var methodsMap = {};
+      for (name of methods) {
+        methodsMap[name] = proto[name];
+      }
+
+      Polymer.registrationsMap[proto.is] = {
+        prototype: proto,
+        properties: proto.properties,
+        methods: methodsMap,
+        extend: function(targetObj, api) {
+          Polymer.Base.extend(targetObj, api || proto);
+          return targetObj;
+        }
+      };
+    }
+
+    Object.defineProperty(Object.prototype, 'extendObj', {
+      enumerable: false,
+      value: function(from) {
+        var props = Object.getOwnPropertyNames(from);
+        var dest = this;
+
+        props.forEach(function(name) {
+          if (!dest[name]) {
+            var destination = Object.getOwnPropertyDescriptor(from, name);
+            Object.defineProperty(dest, name, destination);
+          }
+        });
+        return this;
+      }
+    });
+
+    // look up a previously registered element by name
+    Polymer.findRegistered = function(name) {
+      return Polymer.registrationsMap[name];
+    };
+
+    Polymer.extend = function(baseObj, myObj) {
+      function extendApi(obj, baseObj, attribute) {
+        var baseProps = baseObj[attribute];
+        baseProps = Array.isArray(baseProps) ? baseProps : [baseProps];
+        for (propsObj of baseProps) {
+          if (attribute === 'properties') {
+            obj['properties'].extendObj(propsObj);
+          } else {
+            obj.extendObj(propsObj);
+          }
+        }
+        return obj;
+      }
+
+      var obj = {
+        properties: {}
+      };
+      // extend properties
+      extendApi(obj, baseObj, 'properties');
+      extendApi(obj, baseObj, 'behaviors');
+
+      if (typeof myObj === 'object') {
+        obj.extendObj(myObj);
+      }
+      return obj;
+    }
+
+    Polymer({
+      is: 'my-element',
+      properties: {
+        x: 2,
+        a: 'hello'
+      },
+      _someHandler: function(a) {
+
+      },
+      callMeSoon: function(a) {
+      }
+    });
+
+    var myElement = Polymer.findRegistered('my-element');
+
+    var myExtension = Polymer.extend({
+      properties: myElement.properties,
+      behaviors: myElement.methods
+    }, {
+      is: 'ext-element',
+    });
+
+    console.log('extension', myExtension);
+    Polymer(myExtension);
+    var myExt = Polymer.findRegistered('ext-element');
+
+    console.log('my-ext', myExt);
+  </script>
+</head>
+<body unresolved>
+  <h1>Hello World</h1>
+  <my-element></my-element>
+  <ext-element></ext-element>
+  <!-- Note: if the main element for this repository doesn't
+       match the folder name, add a src="&lt;main-component&gt;.html" attribute,
+       where &lt;main-component&gt;.html" is a file that imports all of the
+       components you want documented. -->
+</body>
+</html>
