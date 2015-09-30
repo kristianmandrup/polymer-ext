@@ -28,6 +28,7 @@ Each element is stored in a map by name as follows:
 Polymer.registrationsMap[proto.is] = {
   prototype: proto,
   properties: proto.properties,
+  props: propsMap,
   methods: methodsMap,
 };
 ```
@@ -50,6 +51,7 @@ Here is a full example for how to use these extensions!
       x: 2,
       a: 'hello'
     },
+    beta: 3,
     _someHandler: function(a) {
     },
     callMeSoon: function(a) {
@@ -58,8 +60,13 @@ Here is a full example for how to use these extensions!
 
   var myElement = Polymer.findRegistered('my-element');
 
+  // Each key: properties, props, methods act as a mixin.
+  // properties - properties object
+  // props - all attributes (non-functions)
+  // methods: - all own functions
   var myExtension = Polymer.extend({
     properties: myElement.properties,
+    props: myElement.props,
     behaviors: myElement.methods
   }, {
     is: 'ext-element',

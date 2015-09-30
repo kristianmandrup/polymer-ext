@@ -1,5 +1,5 @@
-  <link rel="import" href="polymer-ext.html">
-<script type="text/javascript">
+  <link rel='import' href='polymer-ext.html'>
+<script type='text/javascript'>
   (function() {
     Polymer.registrationsMap = {};
     Polymer.registrationHandlers = {
@@ -23,8 +23,28 @@
         '_clearPath'
       ]
 
+      var ignoreProps = [
+        'is',
+        'properties',
+        '_aggregatedAttributes',
+        '_factoryArgs',
+        '_template',
+        '_encapsulateStyle',
+        '_styles',
+        '_ownStylePropertyNames',
+        '_notes',
+        '_propertyEffects',
+        '_bindListeners',
+        '_nodes',
+        '_useContent'
+      ];
+
       var methods = Object.getOwnPropertyNames(proto).filter(function(name) {
         return (typeof proto[name] === 'function' && ignoreMethods.indexOf(name) == -1);
+      });
+
+      var props = Object.getOwnPropertyNames(proto).filter(function(name) {
+        return (typeof proto[name] !== 'function' && ignoreProps.indexOf(name) == -1);
       });
 
       var methodsMap = {};
@@ -32,8 +52,14 @@
         methodsMap[name] = proto[name];
       }
 
+      propsMap = {};
+      for (name of props) {
+        propsMap[name] = proto[name];
+      }
+
       Polymer.registrationsMap[proto.is] = {
         prototype: proto,
+        props: propsMap,
         properties: proto.properties,
         methods: methodsMap
       };
@@ -42,6 +68,9 @@
     Object.defineProperty(Object.prototype, 'extendObj', {
       enumerable: false,
       value: function(from) {
+        if (!from)
+          return this;
+
         var props = Object.getOwnPropertyNames(from);
         var dest = this;
 
@@ -63,7 +92,12 @@
     Polymer.extend = function(baseObj, myObj) {
       function extendApi(obj, baseObj, attribute) {
         var baseProps = baseObj[attribute];
+        if (typeof baseProps !== 'object') {
+          return obj;
+        }
+
         baseProps = Array.isArray(baseProps) ? baseProps : [baseProps];
+
         for (propsObj of baseProps) {
           if (attribute === 'properties') {
             obj['properties'].extendObj(propsObj);
@@ -79,6 +113,7 @@
       };
       // extend properties
       extendApi(obj, baseObj, 'properties');
+      extendApi(obj, baseObj, 'props');
       extendApi(obj, baseObj, 'behaviors');
 
       if (typeof myObj === 'object') {
