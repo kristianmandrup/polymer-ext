@@ -1,0 +1,90 @@
+  <link rel="import" href="polymer-ext.html">
+<script type="text/javascript">
+  (function() {
+    Polymer.registrationsMap = {};
+    Polymer.registrationHandlers = {
+      mapRegistration: mapRegistration
+    };
+
+    Polymer.registered = function(proto) {
+      for (var name of Object.keys(Polymer.registrationHandlers)) {
+        var handler = Polymer.registrationHandlers[name];
+        handler(proto);
+      }
+    }
+
+    function mapRegistration(proto) {
+      var ignoreMethods = [
+        'constructor',
+        '_notifyChange',
+        '_propertySetter',
+        '__setProperty',
+        '_effectEffects',
+        '_clearPath'
+      ]
+
+      var methods = Object.getOwnPropertyNames(proto).filter(function(name) {
+        return (typeof proto[name] === 'function' && ignoreMethods.indexOf(name) == -1);
+      });
+
+      var methodsMap = {};
+      for (name of methods) {
+        methodsMap[name] = proto[name];
+      }
+
+      Polymer.registrationsMap[proto.is] = {
+        prototype: proto,
+        properties: proto.properties,
+        methods: methodsMap
+      };
+    }
+
+    Object.defineProperty(Object.prototype, 'extendObj', {
+      enumerable: false,
+      value: function(from) {
+        var props = Object.getOwnPropertyNames(from);
+        var dest = this;
+
+        props.forEach(function(name) {
+          if (!dest[name]) {
+            var destination = Object.getOwnPropertyDescriptor(from, name);
+            Object.defineProperty(dest, name, destination);
+          }
+        });
+        return this;
+      }
+    });
+
+    // look up a previously registered element by name
+    Polymer.findRegistered = function(name) {
+      return Polymer.registrationsMap[name];
+    };
+
+    Polymer.extend = function(baseObj, myObj) {
+      function extendApi(obj, baseObj, attribute) {
+        var baseProps = baseObj[attribute];
+        baseProps = Array.isArray(baseProps) ? baseProps : [baseProps];
+        for (propsObj of baseProps) {
+          if (attribute === 'properties') {
+            obj['properties'].extendObj(propsObj);
+          } else {
+            obj.extendObj(propsObj);
+          }
+        }
+        return obj;
+      }
+
+      var obj = {
+        properties: {}
+      };
+      // extend properties
+      extendApi(obj, baseObj, 'properties');
+      extendApi(obj, baseObj, 'behaviors');
+
+      if (typeof myObj === 'object') {
+        obj.extendObj(myObj);
+      }
+      return obj;
+    }
+  })()
+  </script>

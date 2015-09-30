@@ -16,89 +16,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../polymer/polymer.html">
-  <link rel="import" href="polymer-ext.html">
-
+  <link rel="import" href="polymer-extend.html">
   <script type="text/javascript">
-    Polymer.registrationsMap = {};
-
-    Polymer.registered = function(proto) {
-      var ignoreMethods = [
-        'constructor',
-        '_notifyChange',
-        '_propertySetter',
-        '__setProperty',
-        '_effectEffects',
-        '_clearPath'
-      ]
-
-      var methods = Object.getOwnPropertyNames(proto).filter(function(name) {
-        return (typeof proto[name] === 'function' && ignoreMethods.indexOf(name) == -1);
-      });
-
-      var methodsMap = {};
-      for (name of methods) {
-        methodsMap[name] = proto[name];
-      }
-
-      Polymer.registrationsMap[proto.is] = {
-        prototype: proto,
-        properties: proto.properties,
-        methods: methodsMap,
-        extend: function(targetObj, api) {
-          Polymer.Base.extend(targetObj, api || proto);
-          return targetObj;
-        }
-      };
-    }
-
-    Object.defineProperty(Object.prototype, 'extendObj', {
-      enumerable: false,
-      value: function(from) {
-        var props = Object.getOwnPropertyNames(from);
-        var dest = this;
-
-        props.forEach(function(name) {
-          if (!dest[name]) {
-            var destination = Object.getOwnPropertyDescriptor(from, name);
-            Object.defineProperty(dest, name, destination);
-          }
-        });
-        return this;
-      }
-    });
-
-    // look up a previously registered element by name
-    Polymer.findRegistered = function(name) {
-      return Polymer.registrationsMap[name];
-    };
-
-    Polymer.extend = function(baseObj, myObj) {
-      function extendApi(obj, baseObj, attribute) {
-        var baseProps = baseObj[attribute];
-        baseProps = Array.isArray(baseProps) ? baseProps : [baseProps];
-        for (propsObj of baseProps) {
-          if (attribute === 'properties') {
-            obj['properties'].extendObj(propsObj);
-          } else {
-            obj.extendObj(propsObj);
-          }
-        }
-        return obj;
-      }
-
-      var obj = {
-        properties: {}
-      };
-      // extend properties
-      extendApi(obj, baseObj, 'properties');
-      extendApi(obj, baseObj, 'behaviors');
-
-      if (typeof myObj === 'object') {
-        obj.extendObj(myObj);
-      }
-      return obj;
-    }
-
     Polymer({
       is: 'my-element',
       properties: {
@@ -106,7 +25,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         a: 'hello'
       },
       _someHandler: function(a) {
-
       },
       callMeSoon: function(a) {
       }
