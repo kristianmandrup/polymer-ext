@@ -1,4 +1,4 @@
-  <link rel='import' href='polymer-ext.html'>
+<link rel='import' href='polymer-ext.html'>
 <script type='text/javascript'>
   (function() {
     Polymer.registrationsMap = {};
@@ -111,6 +111,15 @@
       var obj = {
         properties: {}
       };
+
+      if (baseObj.parent) {
+        console.log('Assign template', baseObj.parent);
+        var template = baseObj.parent.prototype._template;
+        var inner = template.innerHTML;
+        obj._parentTemplate = template;
+        console.log('template', template);
+      }
+
       // extend properties
       extendApi(obj, baseObj, 'properties');
       extendApi(obj, baseObj, 'props');

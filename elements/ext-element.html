@@ -1,0 +1,32 @@
+<dom-module id="ext-element">
+  <template extends="parent-element">
+    <h1>Hello World</h1>
+  </template>
+  <script>
+    var parentElement = Polymer.findRegistered('parent-element');
+    var extElem = Polymer.extend({
+      parent: parentElement,
+      properties: parentElement.properties,
+      props: parentElement.props,
+      behaviors: parentElement.methods
+    }, {
+      is: 'ext-element',
+      templator: function(template) {
+        console.log('My Template', template);
+        if (template) {
+          var parent = template.getAttribute('extends');
+          console.log('parent element id', parent);
+          var parentTemplate = Polymer.DomModule.import(parent, 'template');
+          console.log('parentTemplate', parentTemplate);
+        }
+        this._template = template;
+      }
+    });
+
+    console.log('extension', extElem);
+    Polymer(extElem);
+    var myExt = Polymer.findRegistered('ext-element');
+    console.log('template', extElem._template);
+    console.log('my-ext', extElem);
+  </script>
+<dom-module>

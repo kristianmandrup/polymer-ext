@@ -1,0 +1,21 @@
+<dom-module id="parent-element">
+  <template>
+    <div class="container">
+      <content></content>
+    </div>
+  </template>
+  <script type="text/javascript">
+    Polymer({
+      is: 'parent-element',
+      properties: {
+        x: 2,
+        a: 'hello'
+      },
+      beta: 3,
+      _someHandler: function(a) {
+      },
+      callMeSoon: function(a) {
+      }
+    });
+  </script>
+</dom-module>

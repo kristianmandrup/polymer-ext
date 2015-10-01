@@ -72,12 +72,57 @@ Here is a full example for how to use these extensions!
     is: 'ext-element',
   });
 
-  console.log('extension', myExtension);
   Polymer(myExtension);
   var myExt = Polymer.findRegistered('ext-element');
-
   console.log('my-ext', myExt);
 </script>
+```
+
+TODO
+----
+
+Play with template inheritance. It should be available as the `_template` property. We can also look up templates using the dom-module API. The element `template-ext` extends the built-in Polymer template element: `polymer/mini/template.js` with a callback to the prototype of the element so that the developer can inspect or modify the template before it is stamped.
+
+```js
+_prepTemplate: function() {
+  // locate template using dom-module
+  this._template =
+    this._template || Polymer.DomModule.import(this.is, 'template');
+
+  // ...  
+  // allow hosting element to use or modify template before being used
+  if (typeof this.templator == 'function') {
+    this.templator(this._template);
+  }
+
+},
+```
+
+This trick can be leveraged to achieve template inheritance in any form you like.
+
+```html
+<dom-module id="ext-element">
+  <template extends="parent-element">
+    <h1>Hello World</h1>
+  </template>
+```
+
+Here we defined a custom `extends` attribute on a template that identifies the parent element to be used as a base for this template. Our `templator` function for this element can then use this identifier to import the "base" template or use it to build its own as it likes.
+
+```js
+{
+  is: 'ext-element',
+  templator: function(template) {
+    console.log('My Template', template);
+    if (template) {
+      var parent = template.getAttribute('extends');
+      console.log('parent element id', parent);
+      var parentTemplate = Polymer.DomModule.import(parent, 'template');
+      console.log('parentTemplate', parentTemplate);
+    }
+    this._template = parentTemplate;
+  }
+}
 ```
 
 Dependencies

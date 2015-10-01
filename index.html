@@ -17,40 +17,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../polymer/polymer.html">
   <link rel="import" href="polymer-extend.html">
-  <script type="text/javascript">
-    Polymer({
-      is: 'my-element',
-      properties: {
-        x: 2,
-        a: 'hello'
-      },
-      beta: 3,
-      _someHandler: function(a) {
-      },
-      callMeSoon: function(a) {
-      }
-    });
-
-    var myElement = Polymer.findRegistered('my-element');
-
-    var myExtension = Polymer.extend({
-      properties: myElement.properties,
-      props: myElement.props,
-      behaviors: myElement.methods
-    }, {
-      is: 'ext-element',
-    });
-
-    console.log('extension', myExtension);
-    Polymer(myExtension);
-    var myExt = Polymer.findRegistered('ext-element');
-
-    console.log('my-ext', myExt);
-  </script>
+  <link rel="import" href="template-ext.html">
+  <link rel="import" href="elements/parent-element.html">
+  <link rel="import" href="elements/ext-element.html">
 </head>
 <body unresolved>
-  <h1>Hello World</h1>
-  <my-element></my-element>
   <ext-element></ext-element>
   <!-- Note: if the main element for this repository doesn't
        match the folder name, add a src="&lt;main-component&gt;.html" attribute,
