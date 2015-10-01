@@ -112,18 +112,15 @@
         properties: {}
       };
 
+      var extObj = baseObj;
       if (baseObj.parent) {
-        console.log('Assign template', baseObj.parent);
-        var template = baseObj.parent.prototype._template;
-        var inner = template.innerHTML;
-        obj._parentTemplate = template;
-        console.log('template', template);
+        extObj = baseObj.parent;
       }
 
       // extend properties
-      extendApi(obj, baseObj, 'properties');
-      extendApi(obj, baseObj, 'props');
-      extendApi(obj, baseObj, 'behaviors');
+      extendApi(obj, extObj, 'properties');
+      extendApi(obj, extObj, 'props');
+      extendApi(obj, extObj, 'behaviors');
 
       if (typeof myObj === 'object') {
         obj.extendObj(myObj);

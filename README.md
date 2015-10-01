@@ -65,6 +65,7 @@ Here is a full example for how to use these extensions!
   // props - all attributes (non-functions)
   // methods: - all own functions
   var myExtension = Polymer.extend({
+    parent: myElement,
     properties: myElement.properties,
     props: myElement.props,
     behaviors: myElement.methods
@@ -78,8 +79,10 @@ Here is a full example for how to use these extensions!
 </script>
 ```
 
-TODO
-----
+If only `parent` is specified, it will extend with all: (properties, props and methods).
+
+Template mixins and more...
+---------------------------
 
 Play with template inheritance. It should be available as the `_template` property. We can also look up templates using the dom-module API. The element `template-ext` extends the built-in Polymer template element: `polymer/mini/template.js` with a callback to the prototype of the element so that the developer can inspect or modify the template before it is stamped.
 

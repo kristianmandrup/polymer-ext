@@ -6,9 +6,9 @@
     var parentElement = Polymer.findRegistered('parent-element');
     var extElem = Polymer.extend({
       parent: parentElement,
-      properties: parentElement.properties,
-      props: parentElement.props,
-      behaviors: parentElement.methods
+      // properties: parentElement.properties,
+      // props: parentElement.props,
+      // behaviors: parentElement.methods
     }, {
       is: 'ext-element',
       templator: function(template) {
