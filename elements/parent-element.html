@@ -1,8 +1,13 @@
 <dom-module id="parent-element">
-  <template>
-    <div class="container">
-      <content></content>
-    </div>
+  <template engine="swig">
+    <h1>[: pagename :]</h1>
+    <ul>
+    {% for author in authors %}
+      <li>
+        [: author :]
+      </li>
+    {% endfor %}
+    </ul>
   </template>
   <script type="text/javascript">
     Polymer({

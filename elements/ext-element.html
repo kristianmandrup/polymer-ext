@@ -2,7 +2,24 @@
   <template extends="parent-element">
     <h1>Hello World</h1>
   </template>
+  <script type="text/javascript" src="../node_modules/swig/dist/swig.min.js"/>
+  </script>
   <script>
+    swig.setDefaults({
+      varControls: ['[:', ':]']
+    });
+
+    function swigTemplate(template, locals) {
+      return swig.render(template, {
+        locals: locals
+      });
+    }
+
+    var locals = {
+        pagename: 'awesome people',
+        authors: ['Paul', 'Jim', 'Jane']
+    };
+
     var parentElement = Polymer.findRegistered('parent-element');
     var extElem = Polymer.extend({
       parent: parentElement,
@@ -12,13 +29,19 @@
     }, {
       is: 'ext-element',
       templator: function(template) {
-        console.log('My Template', template);
         if (template) {
+          template = template.cloneNode();
           var parent = template.getAttribute('extends');
-          console.log('parent element id', parent);
           var parentTemplate = Polymer.DomModule.import(parent, 'template');
-          console.log('parentTemplate', parentTemplate);
+          // var fragment = parentTemplate.content;
+          var engine = parentTemplate.getAttribute('engine');
+          if (engine == 'swig') {
+            var templateContent = parentTemplate.innerHTML;
+            console.log('templateContent', templateContent);
+            template.innerHTML = swigTemplate(templateContent, locals)
+          }
         }
+
         this._template = template;
       }
     });

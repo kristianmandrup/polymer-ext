@@ -116,17 +116,37 @@ Here we defined a custom `extends` attribute on a template that identifies the p
 {
   is: 'ext-element',
   templator: function(template) {
-    console.log('My Template', template);
     if (template) {
+      template = template.cloneNode();
       var parent = template.getAttribute('extends');
-      console.log('parent element id', parent);
       var parentTemplate = Polymer.DomModule.import(parent, 'template');
-      console.log('parentTemplate', parentTemplate);
     }
     this._template = parentTemplate;
   }
 }
 ```
+
+Templating your templates
+-------------------------
+
+You can even run a Templating engine on your template to produce your template! This can f.ex be used to elegantly weave your host template into your inherited template ;) Customized inheritance "on steroids"!
+
+```js
+templator: function(template) {
+  if (template) {
+    template = template.cloneNode();
+    // ...
+    var engine = parentTemplate.getAttribute('engine');
+    if (engine == 'swig') {
+      var templateContent = parentTemplate.innerHTML;
+      template.innerHTML = swigTemplate(templateContent, locals)
+    }
+    this._template = template;
+  }
+}
+```
+
+Your imagination is your limit ;)
 
 Dependencies
 ------------
