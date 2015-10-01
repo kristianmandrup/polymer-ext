@@ -1,6 +1,7 @@
 <dom-module id="ext-element">
   <template extends="parent-element">
     <h1>Hello World</h1>
+    <span>{{ title }}</span>
   </template>
   <script type="text/javascript" src="../node_modules/swig/dist/swig.min.js"/>
   </script>
@@ -37,8 +38,8 @@
     }
 
     var locals = {
-        pagename: 'awesome people',
-        authors: ['Paul', 'Jim', 'Jane']
+      pagename: 'awesome people',
+      authors: ['Paul', 'Jim', 'Jane']
     };
 
     var parentElement = Polymer.findRegistered('parent-element');
@@ -50,7 +51,7 @@
     }, {
       is: 'ext-element',
       properties: {
-        subTitle: {
+        title: {
           type: String,
           default: 'hi there'
         }
@@ -58,10 +59,22 @@
       templator: function(template) {
         if (template) {
           templify(template);
+          // template.innerHTML = '<span>{{ subTitle }}<span>';
         }
         this._template = template;
       }
     });
+    var extElem = {
+      is: 'ext-element',
+      properties: {
+        title: {
+          type: String,
+          default: 'hi there'
+        }
+      }
+    }
+
+    console.log('ext', extElem);
     Polymer(extElem);
     var myExt = Polymer.findRegistered('ext-element');
     console.log('template', extElem._template);

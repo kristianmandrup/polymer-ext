@@ -184,15 +184,9 @@ Which makes this the final template.
 </ul>
 ```
 
-Limits: The final template should ideally be able to contain data bindings etc. to be picked up by the Polymer Web Components engine. I haven't managed to resolve this quite yet.
+Limits: The final template should ideally be able to contain data bindings etc. to be picked up by the Polymer Web Components engine. I haven't managed to resolve this quite yet, but looks like it's a simple binding error, since I get the same error with `simple-element.html` which doesn't use any of this new infrastructure!
 
-I've tried escaping the `{{ }}` and then replacing back to the Polymer way,
-
-```js
-output = output.replace(':{{', '{{').replace('}}:', '}}');
-```
-
-But for some reason it fails with:
+For some reason binding currently fails with:
 
 `Cannot read property 'subTitle' of undefined`
 
@@ -201,10 +195,6 @@ get: function () {
   return this.__data__[property];
 }
 ```
-
-Somehow the template does not get correctly re-attached to the original context this naive way...
-
-`this.__data__` is undefined, hmmm...
 
 But hey, your imagination and persistence is your limit ;)
 
