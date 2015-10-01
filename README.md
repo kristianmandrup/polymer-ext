@@ -44,6 +44,7 @@ Here is a full example for how to use these extensions!
 ```html
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="polymer-extend.html">
+<link rel="import" href="template-ext.html">
 <script type="text/javascript">
   Polymer({
     is: 'my-element',
@@ -184,7 +185,7 @@ Which makes this the final template.
 </ul>
 ```
 
-Limits: The final template should ideally be able to contain data bindings etc. to be picked up by the Polymer Web Components engine. I haven't managed to resolve this quite yet, but looks like it's a simple binding error, since I get the same error with `simple-element.html` which doesn't use any of this new infrastructure!
+Limits: The final template should ideally be able to contain data bindings etc. to be picked up by the Polymer Web Components engine. I haven't managed to resolve this quite yet, but looks like it's a simple binding error on my part, since I get the same error with `simple-element.html` which doesn't use any of this new infrastructure!
 
 For some reason binding currently fails with:
 
