@@ -10,9 +10,11 @@
     });
 
     function swigTemplate(template, locals) {
-      return swig.render(template, {
+      var output = swig.render(template, {
         locals: locals
       });
+      output = output.replace(':{{', '{{').replace('}}:', '}}');
+      return output;
     }
 
     var locals = {
@@ -28,6 +30,12 @@
       // behaviors: parentElement.methods
     }, {
       is: 'ext-element',
+      properties: {
+        subTitle: {
+          type: String,
+          default: 'hi there'
+        }
+      },
       templator: function(template) {
         if (template) {
           template = template.cloneNode();
@@ -37,8 +45,8 @@
           var engine = parentTemplate.getAttribute('engine');
           if (engine == 'swig') {
             var templateContent = parentTemplate.innerHTML;
-            console.log('templateContent', templateContent);
-            template.innerHTML = swigTemplate(templateContent, locals)
+            var output = swigTemplate(templateContent, locals);
+            template.innerHTML = output
           }
         }
 

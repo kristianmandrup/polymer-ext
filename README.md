@@ -131,7 +131,28 @@ Templating your templates
 
 You can even run a Templating engine on your template to produce your template! This can f.ex be used to elegantly weave your host template into your inherited template ;) Customized inheritance "on steroids"!
 
+```html
+<dom-module id="parent-element">
+  <template engine="swig">
+    <h1>[: pagename :]</h1>
+    <ul>
+    {% for author in authors %}
+      <li>
+        [: author :]
+      </li>
+    {% endfor %}
+    </ul>
+  </template>
+```
+
 ```js
+var locals = {
+    pagename: 'awesome people',
+    authors: ['Paul', 'Jim', 'Jane']
+};
+
+// ...
+
 templator: function(template) {
   if (template) {
     template = template.cloneNode();
@@ -146,7 +167,46 @@ templator: function(template) {
 }
 ```
 
-Your imagination is your limit ;)
+Which makes this the final template.
+
+```html
+<h1 class="style-scope parent-element">awesome people</h1>
+<ul class="style-scope parent-element">
+  <li class="style-scope parent-element">
+    Paul
+  </li>
+  <li class="style-scope parent-element">
+    Jim
+  </li>
+  <li class="style-scope parent-element">
+    Jane
+  </li>
+</ul>
+```
+
+Limits: The final template should ideally be able to contain data bindings etc. to be picked up by the Polymer Web Components engine. I haven't managed to resolve this quite yet.
+
+I've tried escaping the `{{ }}` and then replacing back to the Polymer way,
+
+```js
+output = output.replace(':{{', '{{').replace('}}:', '}}');
+```
+
+But for some reason it fails with:
+
+`Cannot read property 'subTitle' of undefined`
+
+```js
+get: function () {
+  return this.__data__[property];
+}
+```
+
+Somehow the template does not get correctly re-attached to the original context this naive way...
+
+`this.__data__` is undefined, hmmm...
+
+But hey, your imagination and persistence is your limit ;)
 
 Dependencies
 ------------
