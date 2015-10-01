@@ -198,6 +198,10 @@ get: function () {
 
 But hey, your imagination and persistence is your limit ;)
 
+On a further note, you may combine this extension library with [polymer-reflect](https://github.com/niflostancu/polymer-reflection) to gain even more customization power!
+
+*Awesome!!!*
+
 Dependencies
 ------------
 
