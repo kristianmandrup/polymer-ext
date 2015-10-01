@@ -17,6 +17,25 @@
       return output;
     }
 
+    function templify(template) {
+      // template = template.cloneNode();
+      var parentId = template.getAttribute('extends');
+      console.log('parentId', parentId);
+      // var parentElem = Polymer.DomModule.import(parentId);
+      // console.log('parentElem', parentElem);
+      // var parentTemplate = parentElem.querySelector('template');
+      var parentTemplate = Polymer.DomModule.import(parentId, 'template');
+      // var fragment = parentTemplate.content;
+      console.log('parentTemplate', parentTemplate);
+      var engine = parentTemplate.getAttribute('engine');
+      if (engine == 'swig') {
+        var templateContent = parentTemplate.innerHTML;
+        var output = swigTemplate(templateContent, locals);
+        template.innerHTML = output
+      }
+      return template;
+    }
+
     var locals = {
         pagename: 'awesome people',
         authors: ['Paul', 'Jim', 'Jane']
@@ -38,23 +57,11 @@
       },
       templator: function(template) {
         if (template) {
-          template = template.cloneNode();
-          var parent = template.getAttribute('extends');
-          var parentTemplate = Polymer.DomModule.import(parent, 'template');
-          // var fragment = parentTemplate.content;
-          var engine = parentTemplate.getAttribute('engine');
-          if (engine == 'swig') {
-            var templateContent = parentTemplate.innerHTML;
-            var output = swigTemplate(templateContent, locals);
-            template.innerHTML = output
-          }
+          templify(template);
         }
-
         this._template = template;
       }
     });
-
-    console.log('extension', extElem);
     Polymer(extElem);
     var myExt = Polymer.findRegistered('ext-element');
     console.log('template', extElem._template);

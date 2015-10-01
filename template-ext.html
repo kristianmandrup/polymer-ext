@@ -23,18 +23,17 @@
           'must not be a type-extension, found', this._template,
           'Move inside simple <template>.'));
       }
-      // bootstrap the template if it has not already been
-      if (this._template && !this._template.content && HTMLTemplateElement.bootstrap) {
-        console.log('Bootstrapping template');
-        HTMLTemplateElement.decorate(this._template);
-        // recurse if necessary
-        HTMLTemplateElement.bootstrap(this._template.content);
-      }
-      console.log('Prepared', this.is, this._template);
 
       // allow hosting element to use or modify template before being used
       if (typeof this.templator == 'function') {
         this.templator(this._template);
+      }
+
+      // bootstrap the template if it has not already been
+      if (this._template && !this._template.content && HTMLTemplateElement.bootstrap) {
+        HTMLTemplateElement.decorate(this._template);
+        // recurse if necessary
+        HTMLTemplateElement.bootstrap(this._template.content);
       }
     }
   });
