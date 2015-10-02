@@ -1,22 +1,14 @@
 <dom-module id="simple-element">
   <template>
     <h1>Hello World</h1>
-    <span>{{ title }}</span>
+    <span>{{title}}</span>
   </template>
   <script>
-    var extElem = {
+    Polymer({
       is: 'simple-element',
       properties: {
-        title: {
-          type: String,
-          default: 'hi there'
-        }
+        title: String
       }
-    };
-    console.log('ext', extElem);
-    Polymer(extElem);
-    var myExt = Polymer.findRegistered('simple-element');
-    console.log('template', extElem._template);
-    console.log('my-ext', extElem);
+    });
   </script>
 <dom-module>

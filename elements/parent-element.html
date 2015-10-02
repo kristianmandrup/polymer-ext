@@ -1,7 +1,7 @@
 <dom-module id="parent-element">
   <template engine="swig">
     <h1>[: pagename :]</h1>
-    <h2>:{{ subTitle }}:</h2>
+    <h2>:{{ title }}:</h2>
     <ul>
     {% for author in authors %}
       <li>
@@ -14,9 +14,9 @@
     Polymer({
       is: 'parent-element',
       properties: {
-        title: {
+        name: {
           type: String,
-          default: 'hello'
+          default: 'Kris'
         }
       },
       beta: 3,

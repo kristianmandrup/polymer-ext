@@ -1,16 +1,16 @@
 {
   "name": "polymer-ext",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "authors": [
     "Kristian Mandrup <kmandrup@gmail.com>"
   ],
-  "description": "Extension to Polymer core to allow for custom element 'inheritance' via auto magic mixin registration and use",
+  "description": "Extensions to Polymer core to allow for mixin customization and more",
   "keywords": [
     "web-component",
     "polymer",
     "seed"
   ],
-  "main": "polymer-extend.html",
+  "main": "all.html",
   "license": "http://polymer.github.io/LICENSE.txt",
   "homepage": "https://github.com/kristianmandrup/polymer-ext/",
   "ignore": [

@@ -3,8 +3,6 @@
     <h1>Hello World</h1>
     <span>{{ title }}</span>
   </template>
-  <script type="text/javascript" src="../node_modules/swig/dist/swig.min.js"/>
-  </script>
   <script>
     swig.setDefaults({
       varControls: ['[:', ':]']
@@ -15,24 +13,23 @@
         locals: locals
       });
       output = output.replace(':{{', '{{').replace('}}:', '}}');
+      output = output.replace(':[[', '[[').replace(']]:', ']]');
       return output;
     }
 
     function templify(template) {
       // template = template.cloneNode();
       var parentId = template.getAttribute('extends');
-      console.log('parentId', parentId);
       // var parentElem = Polymer.DomModule.import(parentId);
       // console.log('parentElem', parentElem);
       // var parentTemplate = parentElem.querySelector('template');
       var parentTemplate = Polymer.DomModule.import(parentId, 'template');
       // var fragment = parentTemplate.content;
-      console.log('parentTemplate', parentTemplate);
       var engine = parentTemplate.getAttribute('engine');
       if (engine == 'swig') {
         var templateContent = parentTemplate.innerHTML;
         var output = swigTemplate(templateContent, locals);
-        template.innerHTML = output
+        template.innerHTML = output;
       }
       return template;
     }
@@ -47,7 +44,8 @@
       parent: parentElement,
       // properties: parentElement.properties,
       // props: parentElement.props,
-      // behaviors: parentElement.methods
+      // methods: parentElement.methods,
+      // behaviors: parentElement.behaviors
     }, {
       is: 'ext-element',
       properties: {
@@ -58,26 +56,17 @@
       },
       templator: function(template) {
         if (template) {
+          template = template.cloneNode();
           templify(template);
-          // template.innerHTML = '<span>{{ subTitle }}<span>';
+          // template.innerHTML = '<span>{{ title }}</span>';
         }
         this._template = template;
       }
     });
-    var extElem = {
-      is: 'ext-element',
-      properties: {
-        title: {
-          type: String,
-          default: 'hi there'
-        }
-      }
-    }
 
-    console.log('ext', extElem);
     Polymer(extElem);
     var myExt = Polymer.findRegistered('ext-element');
-    console.log('template', extElem._template);
-    console.log('my-ext', extElem);
+    // console.log('Final template', extElem._template);
+    // console.log('my-ext', extElem);
   </script>
 <dom-module>

@@ -9,7 +9,9 @@ Polymer.registered = function(proto) {
 }
 ```
 
-The element `polymer-extend` builds on this to map registrations and provide convenience methods to more easily build elements from the internals of previously registered elements, to achieve something similar to inheritance, but using a more fine-grained and flexible mixin approach. You can define a map of registration handlers in `Polymer.registrationHandlers` which will all be called (or you can change this to an ordered Array of handlers if you like)
+The element `polymer-extend` builds on this to map registrations and provide convenience methods to more easily build elements from the internals of previously registered elements, to achieve something similar to inheritance, but using a more fine-grained and flexible mixin approach.
+
+You can define a map of registration handlers in `Polymer.registrationHandlers` which will all be called (or you can change this to an ordered Array of handlers if you like)
 
 ```html
 Polymer.registrationHandlers = { mapRegistration: mapRegistration };
@@ -33,9 +35,7 @@ Polymer.registrationsMap[proto.is] = {
 };
 ```
 
-Note that a more fine graind extend method is also available directly on the stored entry.
-
-Futhermore, a method `Polymer.extend` is provided to help extend a previously registered element:
+A method `Polymer.extend` is provided to help extend a previously registered element:
 
 ### Example usage
 
@@ -65,18 +65,18 @@ Here is a full example for how to use these extensions!
   // properties - properties object
   // props - all attributes (non-functions)
   // methods: - all own functions
+  // behaviors: - all own functions and attributes
   var myExtension = Polymer.extend({
     parent: myElement,
-    properties: myElement.properties,
-    props: myElement.props,
-    behaviors: myElement.methods
+    // properties: myElement.properties,
+    // props: myElement.props,
+    // methods: myElement.methods,
+    // behaviors: myElement.behaviors
   }, {
     is: 'ext-element',
   });
 
   Polymer(myExtension);
-  var myExt = Polymer.findRegistered('ext-element');
-  console.log('my-ext', myExt);
 </script>
 ```
 
@@ -85,7 +85,7 @@ If only `parent` is specified, it will extend with all: (properties, props and m
 Template mixins and more...
 ---------------------------
 
-Play with template inheritance. It should be available as the `_template` property. We can also look up templates using the dom-module API. The element `template-ext` extends the built-in Polymer template element: `polymer/mini/template.js` with a callback to the prototype of the element so that the developer can inspect or modify the template before it is stamped.
+The element `template-ext` extends the built-in Polymer template element: `polymer/mini/template.js` with a callback to the prototype of the element so that the developer can inspect or modify the template before it is stamped.
 
 ```js
 _prepTemplate: function() {
@@ -98,7 +98,6 @@ _prepTemplate: function() {
   if (typeof this.templator == 'function') {
     this.templator(this._template);
   }
-
 },
 ```
 
@@ -119,8 +118,7 @@ Here we defined a custom `extends` attribute on a template that identifies the p
   templator: function(template) {
     if (template) {
       template = template.cloneNode();
-      var parent = template.getAttribute('extends');
-      var parentTemplate = Polymer.DomModule.import(parent, 'template');
+      templify(template);
     }
     this._template = parentTemplate;
   }
@@ -136,6 +134,7 @@ You can even run a Templating engine on your template to produce your template! 
 <dom-module id="parent-element">
   <template engine="swig">
     <h1>[: pagename :]</h1>
+    <h2>:{{ title }}:</h2>
     <ul>
     {% for author in authors %}
       <li>
@@ -145,6 +144,8 @@ You can even run a Templating engine on your template to produce your template! 
     </ul>
   </template>
 ```
+
+Note that `:{{ title }}:` is used to indicate a Polymer value two-way binding form `{{ title }}`. Use `:[[ title ]]` for the one-way binding form `[[ title ]]`. You can customize this as you like, we have just used this convention in our example using Swig templating.
 
 ```js
 var locals = {
@@ -185,21 +186,9 @@ Which makes this the final template.
 </ul>
 ```
 
-Limits: The final template should ideally be able to contain data bindings etc. to be picked up by the Polymer Web Components engine. I haven't managed to resolve this quite yet, but looks like it's a simple binding error on my part, since I get the same error with `simple-element.html` which doesn't use any of this new infrastructure!
+Your imagination and persistence is your limit ;)
 
-For some reason binding currently fails with:
-
-`Cannot read property 'subTitle' of undefined`
-
-```js
-get: function () {
-  return this.__data__[property];
-}
-```
-
-But hey, your imagination and persistence is your limit ;)
-
-On a further note, you may combine this extension library with [polymer-reflect](https://github.com/niflostancu/polymer-reflection) to gain even more customization power!
+On a further note, you may combine this extension library with [polymer-reflect](https://github.com/niflostancu/polymer-reflection) to gain even more power!
 
 *Awesome!!!*
 
